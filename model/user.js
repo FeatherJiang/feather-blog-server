@@ -9,4 +9,4 @@ class user {
   }
 }
 
-exports.user = user
+module.exports = user
