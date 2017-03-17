@@ -2,9 +2,10 @@
  * Created by feather on 2017/3/15.
  */
 class article {
-  constructor (title, tags, overview, content, date, view, comment, like, type, id) {
+  constructor (title, tags, img, overview, content, date, view, comment, like, type, id, commentList) {
     this.title = title
     this.tags = tags
+    this.img = img
     this.overview = overview
     this.content = content
     this.date = date
@@ -13,7 +14,10 @@ class article {
     this.like = like
     this.type = type
     this.id = id
+    this.commentList = commentList
   }
 }
 
-module.exports = article
+module.exports = function (title, tags, img, overview, content, date, view, comment, like, type, id, commentList) {
+  return new article(title, tags,img, overview, content, date, view, comment, like, type, id, commentList)
+}

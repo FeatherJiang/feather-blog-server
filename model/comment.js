@@ -13,4 +13,6 @@ class comment {
   }
 }
 
-module.exports = comment
+module.exports = function (articleId, avatar, name, email, comment, date, id) {
+  return new comment(articleId, avatar, name, email, comment, date, id)
+}

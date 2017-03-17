@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
 
-var article = require('../model/article')
+var articleClass = require('../model/article')
 var comment = require('../model/comment')
 
 var mysql = require('mysql')
@@ -10,6 +10,21 @@ var articleSql = require('../db/articleSql')
 var userSql = require('../db/userSql')
 var commentSql = require('../db/commentSql')
 var randomStr = require('../tools/randomString')
+
+var multer = require('multer')
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/images/');
+  },
+  filename: function (req, file, cb) {
+    let regExp = new RegExp(/\..+/, 'g')
+    var ext = file.originalname.match(regExp)[0]
+    cb(null, randomStr() + ext);
+  }
+})
+
+var upload = multer({ storage: storage })
 
 var pool = mysql.createPool(dbConfig.mysql)
 
@@ -25,8 +40,8 @@ var responseJSON = function (res, ret) {
 }
 
 var validToken = function (req, res, next) {
-  var param = []
-  param.push(req.query.token)
+  let param = []
+  param.push(req.body.token)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -39,6 +54,7 @@ var validToken = function (req, res, next) {
           responseJSON(res)
         }
         if (result.length > 0) {
+          console.log('right token')
           next()
         } else {
           responseJSON(res)
@@ -50,9 +66,9 @@ var validToken = function (req, res, next) {
 
 /* post api. */
 router.post('/login', function (req, res, next) {
-  var param = []
-  param.push(req.query.name)
-  var password = req.query.password
+  let param = []
+  param.push(req.body.name)
+  let password = req.body.password
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -93,11 +109,42 @@ router.post('/login', function (req, res, next) {
   })
 })
 
-router.post('/addArticle', validToken, function (req, res, next) {
-  var param = []
-  for (let attr in req.body) {
-    param.push(req.body[attr])
+router.post('/insertImg', upload.single('img'), function (req, res, next) {
+  console.log(req.file)
+  if (req.file) {
+    res.json({
+      code: 1,
+      msg: 'success',
+      data: {
+        imgLink: 'http://www.jiangfeather.com/images/' + req.file.filename
+      }
+    })
+  } else {
+    res.json({
+      code: 0,
+      msg: 'fail'
+    })
   }
+})
+
+router.post('/addArticle', upload.single('img'), validToken, function (req, res, next) {
+  let param = []
+  let img = ''
+  console.log(req.body.article)
+  let article = JSON.parse(req.body.article)
+  if (req.file) {
+    img = 'http://www.jiangfeather.com/images/' + req.file.filename
+  }
+  param.push(article.title)
+  param.push(article.tags)
+  param.push(img)
+  param.push(article.overview)
+  param.push(article.content)
+  param.push(article.date)
+  param.push(0)
+  param.push(0)
+  param.push(0)
+  param.push(article.type)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -190,7 +237,7 @@ router.post('/getArticleList', function (req, res, next) {
           var articleList = []
 
           for (let i = 0; i < result.length; i++) {
-            articleList.push(new article(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type))
+            articleList.push(articleClass(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
           }
 
           result = {
@@ -225,7 +272,7 @@ router.post('/getArticleListByType', function (req, res, next) {
           var articleList = []
 
           for (let i = 0; i < result.length; i++) {
-            articleList.push(new article(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id))
+            articleList.push(articleClass(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
           }
 
           result = {
@@ -260,7 +307,7 @@ router.post('/getArticleListByTag', function (req, res, next) {
           var articleList = []
 
           for (let i = 0; i < result.length; i++) {
-            articleList.push(new article(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id))
+            articleList.push(articleClass(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
           }
 
           result = {
@@ -281,25 +328,25 @@ router.post('/getArticleListByTag', function (req, res, next) {
 
 router.post('/getArticleById', function (req, res, next) {
   var param = []
-  param.push(req.query.id)
+  param.push(req.body.id)
 
   pool.getConnection(function (err, connection) {
     if (err) {
       console.log(err.toString())
     } else {
-      connection.query(articleSql.queryListByType, param, function (err, result) {
+      connection.query(articleSql.getArticleById, param, function (err, result) {
         if (err) {
           console.log(err.toString())
         }
         if (result) {
-          var article = new article(result[0].title, result[0].tags, result[0].img, result[0].overview, result[0].content, result[0].date, result[0].view, [], result[0].like, result[0].type, result[0].id)
+          let article = articleClass(result[0].title, result[0].tags, result[0].img, result[0].overview, result[0].content, result[0].date, result[0].view, result[0].comment, result[0].like, result[0].type, result[0].id, [])
           connection.query(commentSql.getCommentListById, [result[0].id], function (err, result) {
             if (err) {
               console.log(err.toString())
             }
             if (result > 0) {
               for (let i = 0; i < result.length; i++) {
-                article.comment.push(new comment(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].comment, result[i].date, result[i].id))
+                article.commentList.push(comment(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].comment, result[i].date, result[i].id))
               }
             }
             connection.query(articleSql.addView, article.id, function (err, result) {
