@@ -28,6 +28,8 @@ var upload = multer({ storage: storage })
 
 var pool = mysql.createPool(dbConfig.mysql)
 
+const LIMIT = 10
+
 var responseJSON = function (res, ret) {
   if (typeof ret === 'undefined') {
     res.json({
@@ -57,6 +59,10 @@ var validToken = function (req, res, next) {
           console.log('right token')
           next()
         } else {
+          res = {
+            code: 0,
+            msg: 'token error'
+          }
           responseJSON(res)
         }
       })
@@ -168,11 +174,23 @@ router.post('/addArticle', upload.single('img'), validToken, function (req, res,
   })
 })
 
-router.post('/updateArticle', validToken, function (req, res, next) {
-  var param = []
-  for (let attr in req.body) {
-    param.push(req.body[attr])
+router.post('/updateArticle', upload.single('img'), validToken, function (req, res, next) {
+  let param = []
+  let img = ''
+  let article = JSON.parse(req.body.article)
+
+  param.push(article.title)
+  param.push(article.tags)
+  if (req.file) {
+    img = 'http://www.jiangfeather.com/images/' + req.file.filename
+    param.push(img)
+  } else {
+    param.push(article.img)
   }
+  param.push(article.overview)
+  param.push(article.content)
+  param.push(article.type)
+  param.push(article.id)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -197,8 +215,8 @@ router.post('/updateArticle', validToken, function (req, res, next) {
 })
 
 router.post('/deleteArticle', validToken, function (req, res, next) {
-  var param = []
-  param.push(req.query.id)
+  let param = []
+  param.push(req.body.id)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -225,6 +243,12 @@ router.post('/deleteArticle', validToken, function (req, res, next) {
 router.post('/getArticleList', function (req, res, next) {
   var param = []
 
+  if (req.body.page === undefined) {
+    req.body.page = 1
+  }
+  param.push((req.body.page - 1) * LIMIT)
+  param.push(req.body.page * LIMIT)
+
   pool.getConnection(function (err, connection) {
     if (err) {
       console.log(err.toString())
@@ -237,7 +261,7 @@ router.post('/getArticleList', function (req, res, next) {
           var articleList = []
 
           for (let i = 0; i < result.length; i++) {
-            articleList.push(articleClass(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
+            articleList.push(articleClass(result[i].title, result[i].tags.split(','), result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
           }
 
           result = {
@@ -339,7 +363,7 @@ router.post('/getArticleById', function (req, res, next) {
           console.log(err.toString())
         }
         if (result) {
-          let article = articleClass(result[0].title, result[0].tags, result[0].img, result[0].overview, result[0].content, result[0].date, result[0].view, result[0].comment, result[0].like, result[0].type, result[0].id, [])
+          let article = articleClass(result[0].title, result[0].tags.split(','), result[0].img, result[0].overview, result[0].content, result[0].date, result[0].view, result[0].comment, result[0].like, result[0].type, result[0].id, [])
           connection.query(commentSql.getCommentListById, [result[0].id], function (err, result) {
             if (err) {
               console.log(err.toString())

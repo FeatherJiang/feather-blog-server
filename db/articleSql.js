@@ -5,7 +5,7 @@ var articleSql = {
   insert: 'INSERT INTO article VALUES(null,?,?,?,?,?,?,?,?,?,?)',
   update: 'UPDATE article SET title = ?, tags = ?, img = ?, overview = ?, content = ?, type = ? WHERE id = ?',
   delete: 'DELETE FROM article WHERE id = ?',
-  queryAll: 'SELECT * FROM article',
+  queryAll: 'SELECT * FROM article ORDER BY article.id DESC LIMIT ?, ?',
   queryListByType: 'SELECT * FROM article WHERE type = ?',
   queryListByTag: 'SELECT * FROM article WHERE tags like ?',
   getArticleById: 'SELECT * FROM article WHERE id = ?',
