@@ -13,6 +13,6 @@ class comment {
   }
 }
 
-module.exports = function (articleId, avatar, name, email, comment, date, id) {
-  return new comment(articleId, avatar, name, email, comment, date, id)
+module.exports = function (articleId, avatar, name, email, content, date, id) {
+  return new comment(articleId, avatar, name, email, content, date, id)
 }
