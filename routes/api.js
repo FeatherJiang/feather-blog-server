@@ -415,7 +415,7 @@ router.post('/getArticleById', function (req, res, next) {
             if (err) {
               console.log(err.toString())
             }
-            if (result) {
+            if (result.lenght > 0) {
               let article = articleClass(result[0].title, result[0].tags.split(','), result[0].img, result[0].overview, result[0].content, result[0].date, result[0].view, result[0].comment, result[0].like, result[0].type, result[0].id, [])
               callback(null, article)
             }
