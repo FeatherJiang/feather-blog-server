@@ -200,7 +200,7 @@ router.post('/updateArticle', upload.single('img'), validToken, function (req, r
       img = 'http://www.jiangfeather.com/images/' + req.file.filename
       param.push(img)
     } else {
-      param.push(article.img)
+      param.push(req.body.img)
     }
     param.push(article.overview)
     param.push(article.content)
