@@ -330,7 +330,7 @@ router.post('/getArticleListByType', function (req, res, next) {
           var articleList = []
 
           for (let i = 0; i < result.length; i++) {
-            articleList.push(articleClass(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
+            articleList.push(articleClass(result[i].title, result[i].tags.split(','), result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
           }
 
           result = {
@@ -355,7 +355,7 @@ router.post('/getArticleListByTag', function (req, res, next) {
   if (req.body.tag === undefined) {
     responseJSON(res)
   } else {
-    param.push(req.body.tag)
+    param.push('%' + req.body.tag + '%')
   }
 
   if (req.body.page === undefined) {
@@ -377,7 +377,7 @@ router.post('/getArticleListByTag', function (req, res, next) {
           var articleList = []
 
           for (let i = 0; i < result.length; i++) {
-            articleList.push(articleClass(result[i].title, result[i].tags, result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
+            articleList.push(articleClass(result[i].title, result[i].tags.split(','), result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
           }
 
           result = {
