@@ -4,7 +4,7 @@
 
 var tagSql = {
   queryTag: 'SELECT * FROM tag WHERE type = 0',
-  queryTopic: 'SELECT * FROM tag WHERE type = 1',
+  queryTopic: 'SELECT * FROM tag WHERE type = 2',
   queryTagType: 'SELECT * FROM tag WHERE text = ?'
 }
 

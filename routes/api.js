@@ -66,8 +66,8 @@ var validToken = function (req, res, next) {
             code: 0,
             msg: 'token error'
           }
+          responseJSON(res, result)
         }
-        responseJSON(res, result)
 
         connection.release()
       })
@@ -618,8 +618,9 @@ router.post('/updateBanner', upload.single('img'), validToken, function (req, re
     if (req.file) {
       img = "http://www.jiangfeather.com/images/" + req.file.filename
       param.push(img)
+    } else {
+      param.push(req.body.img)
     }
-    param.push(req.body.img)
     param.push(req.body.link)
     param.push(req.body.id)
   }
@@ -731,7 +732,7 @@ router.post('/addLike', function (req, res, next) {
       console.log(err.toString())
       responseJSON(res)
     } else {
-      connection.query(articleSql.addLike, function (err, result) {
+      connection.query(articleSql.addLike, param, function (err, result) {
         if (err) {
           console.log(err.toString())
         }

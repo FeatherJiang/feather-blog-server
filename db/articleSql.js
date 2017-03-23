@@ -9,9 +9,9 @@ var articleSql = {
   queryListByType: 'SELECT * FROM article WHERE type = ? ORDER BY article.id DESC LIMIT ?, ?',
   queryListByTag: 'SELECT * FROM article WHERE tags like ? ORDER BY article.id DESC LIMIT ?, ?',
   getArticleById: 'SELECT * FROM article WHERE id = ?',
-  addView: 'UPDATE article SET view = view + 1 WHERE id = ?',
+  addView: 'UPDATE article SET article.view = article.view + 1 WHERE id = ?',
   addComment: 'UPDATE article SET comment = comment + 1 WHERE id = ?',
-  addLike: 'UPDATE article SET like = like + 1 WHERE id = ?'
+  addLike: 'UPDATE article SET article.like = article.like + 1 WHERE id = ?'
 }
 
 module.exports = articleSql
