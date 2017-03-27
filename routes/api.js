@@ -12,6 +12,7 @@ var userSql = require('../db/userSql')
 var commentSql = require('../db/commentSql')
 var bannerSql = require('../db/bannerSql')
 var tagSql = require('../db/tagSql')
+var aboutmeSql = require('../db/aboutmeSql')
 var randomStr = require('../tools/randomString')
 
 var multer = require('multer')
@@ -482,6 +483,108 @@ router.post('/getArticleById', function (req, res, next) {
 
 })
 
+router.post('/addComment', upload.single('img'), function (req, res, next) {
+  let param = []
+  let img = ''
+
+  if (req.body.articleId === undefined) {
+    responseJSON(res)
+  } else {
+    param.push(req.body.articleId)
+    if (req.file) {
+      img = "http://www.jiangfeather.com/images/" + req.file.filename
+      param.push(img)
+    } else {
+      param.push(req.body.img)
+    }
+    param.push(req.body.name)
+    param.push(req.body.email)
+    param.push(req.body.comment)
+    param.push(req.body.date)
+  }
+
+  async.waterfall([
+    function (callback) {
+      pool.getConnection(function (err, connection) {
+        if (err) {
+          console.log(err.toString())
+        } else {
+          connection.query(commentSql.insert, param, function (err, result) {
+            if (err) {
+              console.log(err.toString())
+            }
+
+            if (result) {
+              callback(null, true);
+            }
+            connection.release()
+          })
+        }
+      })
+    },
+    function (arg, callback) {
+      if (arg === true) {
+        pool.getConnection(function (err, connection) {
+          connection.query(articleSql.addComment, param[0], function (err, result) {
+            if (err) {
+              console.log(err.toString())
+            }
+            if (result) {
+              callback(null, true)
+            }
+            connection.release()
+          })
+        })
+      }
+    }
+  ], function (err, result) {
+    if (err) {
+      responseJSON(res)
+    }
+    if (result === true) {
+      result = {
+        code: 1,
+        msg: 'success'
+      }
+      responseJSON(res, result)
+    }
+  })
+
+})
+
+router.post('/addLike', function (req, res, next) {
+  var param = []
+
+  if (req.body.id === undefined) {
+    responseJSON(res)
+  } else {
+    param.push(req.body.id)
+  }
+
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      console.log(err.toString())
+      responseJSON(res)
+    } else {
+      connection.query(articleSql.addLike, param, function (err, result) {
+        if (err) {
+          console.log(err.toString())
+        }
+        if (result) {
+          result = {
+            code: 1,
+            msg: 'success'
+          }
+        }
+
+        responseJSON(res, result)
+
+        connection.release()
+      })
+    }
+  })
+})
+
 router.post('/getBannerList', function (req, res, next) {
   let param = []
   pool.getConnection(function (err, connection) {
@@ -504,6 +607,47 @@ router.post('/getBannerList', function (req, res, next) {
             code: 1,
             msg: 'success',
             data: bannerList
+          }
+        }
+        responseJSON(res, result)
+
+        connection.release()
+      })
+    }
+  })
+})
+
+router.post('/updateBanner', upload.single('img'), validToken, function (req, res, next) {
+  let param = []
+
+  let img = ''
+  if (req.body.link === undefined || req.body.id === undefined) {
+    responseJSON(res)
+  } else {
+    if (req.file) {
+      img = "http://www.jiangfeather.com/images/" + req.file.filename
+      param.push(img)
+    } else {
+      param.push(req.body.img)
+    }
+    param.push(req.body.link)
+    param.push(req.body.id)
+  }
+
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      console.log(err.toString())
+      responseJSON(res)
+    } else {
+      connection.query(bannerSql.update, param, function (err, result) {
+        if (err) {
+          console.log(err.toString())
+        }
+        if (result) {
+
+          result = {
+            code: 1,
+            msg: 'success'
           }
         }
         responseJSON(res, result)
@@ -608,37 +752,20 @@ router.post('/getTagType', function (req, res, next) {
   })
 })
 
-router.post('/updateBanner', upload.single('img'), validToken, function (req, res, next) {
-  let param = []
-
-  let img = ''
-  if (req.body.link === undefined || req.body.id === undefined) {
-    responseJSON(res)
-  } else {
-    if (req.file) {
-      img = "http://www.jiangfeather.com/images/" + req.file.filename
-      param.push(img)
-    } else {
-      param.push(req.body.img)
-    }
-    param.push(req.body.link)
-    param.push(req.body.id)
-  }
-
+router.post('/getAboutMe', function (req, res ,next) {
   pool.getConnection(function (err, connection) {
     if (err) {
-      console.log(err.toString())
-      responseJSON(res)
+      console.log(err)
     } else {
-      connection.query(bannerSql.update, param, function (err, result) {
+      connection.query(aboutmeSql.queryAll, null, function (err, result) {
         if (err) {
           console.log(err.toString())
         }
-        if (result) {
-
+        if (result.length > 0) {
           result = {
             code: 1,
-            msg: 'success'
+            msg: 'success',
+            data: result[0].content
           }
         }
         responseJSON(res, result)
@@ -649,92 +776,21 @@ router.post('/updateBanner', upload.single('img'), validToken, function (req, re
   })
 })
 
-router.post('/addComment', upload.single('img'), function (req, res, next) {
+router.post('updateAboutMe', function (req, res, next) {
   let param = []
-  let img = ''
-
-  if (req.body.articleId === undefined) {
+  if (req.body.content === undefined) {
     responseJSON(res)
   } else {
-    param.push(req.body.articleId)
-    if (req.file) {
-      img = "http://www.jiangfeather.com/images/" + req.file.filename
-      param.push(img)
-    } else {
-      param.push(req.body.img)
-    }
-    param.push(req.body.name)
-    param.push(req.body.email)
-    param.push(req.body.comment)
-    param.push(req.body.date)
-  }
-
-  async.waterfall([
-    function (callback) {
-      pool.getConnection(function (err, connection) {
-        if (err) {
-          console.log(err.toString())
-        } else {
-          connection.query(commentSql.insert, param, function (err, result) {
-            if (err) {
-              console.log(err.toString())
-            }
-
-            if (result) {
-              callback(null, true);
-            }
-            connection.release()
-          })
-        }
-      })
-    },
-    function (arg, callback) {
-      if (arg === true) {
-        pool.getConnection(function (err, connection) {
-          connection.query(articleSql.addComment, param[0], function (err, result) {
-            if (err) {
-              console.log(err.toString())
-            }
-            if (result) {
-              callback(null, true)
-            }
-            connection.release()
-          })
-        })
-      }
-    }
-  ], function (err, result) {
-    if (err) {
-      responseJSON(res)
-    }
-    if (result === true) {
-      result = {
-        code: 1,
-        msg: 'success'
-      }
-      responseJSON(res, result)
-    }
-  })
-
-})
-
-router.post('/addLike', function (req, res, next) {
-  var param = []
-
-  if (req.body.id === undefined) {
-    responseJSON(res)
-  } else {
-    param.push(req.body.id)
+    param.push(req.body.content)
   }
 
   pool.getConnection(function (err, connection) {
     if (err) {
       console.log(err.toString())
-      responseJSON(res)
     } else {
-      connection.query(articleSql.addLike, param, function (err, result) {
+      connection.query(aboutmeSql.update, param, function (err, result) {
         if (err) {
-          console.log(err.toString())
+          err.toString()
         }
         if (result) {
           result = {
@@ -742,8 +798,7 @@ router.post('/addLike', function (req, res, next) {
             msg: 'success'
           }
         }
-
-        responseJSON(res, result)
+        responseJSON(res,  result)
 
         connection.release()
       })
