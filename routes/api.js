@@ -776,7 +776,7 @@ router.post('/getAboutMe', function (req, res ,next) {
   })
 })
 
-router.post('/updateAboutMe', function (req, res, next) {
+router.post('/updateAboutMe', validToken, function (req, res, next) {
   let param = []
   if (req.body.content === undefined) {
     responseJSON(res)
