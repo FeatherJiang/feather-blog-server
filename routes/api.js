@@ -438,7 +438,7 @@ router.post('/getArticleById', function (req, res, next) {
             }
             if (result.length >= 0) {
               for (let i = 0; i < result.length; i++) {
-                article.commentList.push(commentClass(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].comment, result[i].date, result[i].id))
+                article.commentList.push(commentClass(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].content, result[i].date, result[i].id))
               }
               callback(null, article)
             }
@@ -499,7 +499,7 @@ router.post('/addComment', upload.single('img'), function (req, res, next) {
     }
     param.push(req.body.name)
     param.push(req.body.email)
-    param.push(req.body.comment)
+    param.push(req.body.content)
     param.push(req.body.date)
   }
 
@@ -544,7 +544,10 @@ router.post('/addComment', upload.single('img'), function (req, res, next) {
     if (result === true) {
       result = {
         code: 1,
-        msg: 'success'
+        msg: 'success',
+        data: {
+          avatar: param[1]
+        }
       }
       responseJSON(res, result)
     }
