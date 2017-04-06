@@ -97,7 +97,7 @@ router.post('/login', function (req, res, next) {
           console.log(err.toString())
           responseJSON(res)
         }
-        if (result.length > 0) {
+        if (result) {
           if (password === result[0].password) {
             let token = randomStr()
             connection.query(userSql.updateToken, [token], function (err, result) {
@@ -416,7 +416,7 @@ router.post('/getArticleById', function (req, res, next) {
             if (err) {
               console.log(err.toString())
             }
-            if (result.length > 0) {
+            if (result) {
               let article = articleClass(result[0].title, result[0].tags.split(','), result[0].img, result[0].overview, result[0].content, result[0].date, result[0].view, result[0].comment, result[0].like, result[0].type, result[0].id, [])
               callback(null, article)
             }
@@ -436,7 +436,7 @@ router.post('/getArticleById', function (req, res, next) {
             if (err) {
               console.log(err.toString())
             }
-            if (result.length >= 0) {
+            if (result) {
               for (let i = 0; i < result.length; i++) {
                 article.commentList.push(commentClass(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].content, result[i].date, result[i].id))
               }
@@ -557,30 +557,59 @@ router.post('/addComment', upload.single('img'), function (req, res, next) {
 
 router.post('/deleteComment', validToken, function (req, res, next) {
   let param = []
-  if (req.body.id !== undefined) {
-    param.push(req.body.id)
+  if (req.body.commentId !== undefined) {
+    param.push(req.body.commentId)
   } else {
     responseJSON(res)
   }
 
-  pool.getConnection(function (err, connection) {
-    if (err) {
-      console.log(err.toString())
-      responseJSON(res)
-    } else {
-      connection.query(commentSql.delete, param, function (err , result) {
+  async.waterfall([
+    function (callback) {
+      pool.getConnection(function (err, connection) {
         if (err) {
           console.log(err.toString())
+          responseJSON(res)
+        } else {
+          connection.query(commentSql.delete, param, function (err , result) {
+            if (err) {
+              console.log(err.toString())
+            }
+            if (result) {
+              callback(null)
+            }
+            connection.release()
+          })
         }
-        if (result) {
-          result = {
-            code: 1,
-            msg: 'success'
-          }
-        }
-        responseJSON(res, result)
-        connection.release()
       })
+    },
+    function (callback) {
+      pool.getConnection(function (err, connection) {
+        if (err) {
+          console.log(err.toString())
+          responseJSON(res)
+        } else {
+          connection.query(articleSql.delComment, req.body.articleId, function (err , result) {
+            if (err) {
+              console.log(err.toString())
+            }
+            if (result) {
+              result = {
+                code: 1,
+                msg: 'success'
+              }
+              callback(null, result)
+            }
+            connection.release()
+          })
+        }
+      })
+    }
+  ], function (err, result) {
+    if (err) {
+      responseJSON(res)
+    }
+    if (result) {
+      responseJSON(res, result)
     }
   })
 })
@@ -609,7 +638,7 @@ router.post('/getCommentList', function (req, res, next) {
         if (err) {
           console.log(err.toString())
         }
-        if (result.length > 0) {
+        if (result) {
           let comments = []
           for (let i = 0; i < result.length; i++) {
             comments.push(commentClass(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].content, result[i].date, result[i].id))
@@ -673,7 +702,7 @@ router.post('/getBannerList', function (req, res, next) {
         if (err) {
           console.log(err.toString())
         }
-        if (result.length > 0) {
+        if (result) {
           let bannerList = []
 
           for (let i = 0; i < result.length; i++) {

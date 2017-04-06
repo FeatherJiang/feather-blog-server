@@ -11,6 +11,7 @@ var articleSql = {
   getArticleById: 'SELECT * FROM article WHERE id = ?',
   addView: 'UPDATE article SET article.view = article.view + 1 WHERE id = ?',
   addComment: 'UPDATE article SET comment = comment + 1 WHERE id = ?',
+  delComment: 'UPDATE article SET comment = comment - 1 WHERE id = ?',
   addLike: 'UPDATE article SET article.like = article.like + 1 WHERE id = ?'
 }
 
