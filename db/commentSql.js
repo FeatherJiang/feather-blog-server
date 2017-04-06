@@ -4,7 +4,8 @@
 var commentSql = {
   insert: 'INSERT INTO comment VALUES(null,?,?,?,?,?,?)',
   delete: 'DELETE FROM comment WHERE id = ?',
-  getCommentListById: 'SELECT * FROM comment WHERE articleId = ?'
+  getCommentListById: 'SELECT * FROM comment WHERE articleId = ?',
+  getCommentList: 'SELECT * FROM comment WHERE articleId = ? ORDER BY articleId LIMIT ?, ?'
 }
 
 module.exports = commentSql

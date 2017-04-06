@@ -555,6 +555,80 @@ router.post('/addComment', upload.single('img'), function (req, res, next) {
 
 })
 
+router.post('/deleteComment', validToken, function (req, res, next) {
+  let param = []
+  if (req.body.id !== undefined) {
+    param.push(req.body.id)
+  } else {
+    responseJSON(res)
+  }
+
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      console.log(err.toString())
+      responseJSON(res)
+    } else {
+      connection.query(commentSql.delete, param, function (err , result) {
+        if (err) {
+          console.log(err.toString())
+        }
+        if (result) {
+          result = {
+            code: 1,
+            msg: 'success'
+          }
+        }
+        responseJSON(res, result)
+        connection.release()
+      })
+    }
+  })
+})
+
+router.post('/getCommentList', function (req, res, next) {
+  let param = []
+
+  if (req.body.id !== undefined) {
+    param.push(req.body.id)
+  } else {
+    responseJSON(res)
+  }
+
+  if (req.body.page === undefined) {
+    req.body.page = 1
+  }
+  param.push((req.body.page - 1) * LIMIT)
+  param.push(req.body.page * LIMIT)
+
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      console.log(err.toString())
+      responseJSON(res)
+    } else {
+      connection.query(commentSql.getCommentList, param, function (err, result) {
+        if (err) {
+          console.log(err.toString())
+        }
+        if (result.length > 0) {
+          let comments = []
+          for (let i = 0; i < result.length; i++) {
+            comments.push(commentClass(result[i].articleId, result[i].avatar, result[i].name, result[i].email, result[i].content, result[i].date, result[i].id))
+          }
+          result = {
+            code: 1,
+            msg: 'success',
+            data: {
+              comments: comments
+            }
+          }
+        }
+        responseJSON(res, result)
+        connection.release()
+      })
+    }
+  })
+})
+
 router.post('/addLike', function (req, res, next) {
   var param = []
 
