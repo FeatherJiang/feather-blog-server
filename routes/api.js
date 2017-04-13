@@ -98,7 +98,7 @@ router.post('/login', function (req, res, next) {
           responseJSON(res)
         }
         if (result) {
-          if (password === result[0].password) {
+          if (result[0] !== undefined && password === result[0].password) {
             let token = randomStr()
             connection.query(userSql.updateToken, [token], function (err, result) {
               if (err) {
@@ -117,7 +117,15 @@ router.post('/login', function (req, res, next) {
 
               connection.release()
             })
+          } else {
+            responseJSON(res)
+
+            connection.release()
           }
+        } else {
+          responseJSON(res)
+
+          connection.release()
         }
       })
     }
