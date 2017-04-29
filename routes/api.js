@@ -82,6 +82,7 @@ router.post('/login', function (req, res, next) {
   let password = ''
   if (req.body.name === undefined || req.body.password === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.name)
     password = req.body.password
@@ -96,6 +97,7 @@ router.post('/login', function (req, res, next) {
         if (err) {
           console.log(err.toString())
           responseJSON(res)
+          next()
         }
         if (result) {
           if (result[0] !== undefined && password === result[0].password) {
@@ -155,6 +157,7 @@ router.post('/addArticle', upload.single('img'), validToken, function (req, res,
   let img = ''
   if (req.body.article === undefined) {
     responseJSON(res)
+    next()
   } else {
     let article = JSON.parse(req.body.article)
     if (req.file) {
@@ -200,6 +203,7 @@ router.post('/updateArticle', upload.single('img'), validToken, function (req, r
   let img = ''
   if (req.body.article === undefined) {
     responseJSON(res)
+    next()
   } else {
     let article = JSON.parse(req.body.article)
 
@@ -244,6 +248,7 @@ router.post('/deleteArticle', validToken, function (req, res, next) {
   let param = []
   if (req.body.id === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.id)
   }
@@ -316,6 +321,7 @@ router.post('/getArticleListByType', function (req, res, next) {
   let param = []
   if (req.body.type === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.type)
   }
@@ -363,6 +369,7 @@ router.post('/getArticleListByTag', function (req, res, next) {
 
   if (req.body.tag === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push('%' + req.body.tag + '%')
   }
@@ -410,6 +417,7 @@ router.post('/getArticleById', function (req, res, next) {
 
   if (req.body.id === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.id)
   }
@@ -485,6 +493,7 @@ router.post('/getArticleById', function (req, res, next) {
   ],function (err, result) {
     if (err) {
       responseJSON(res)
+      next()
     }
     if (result) {
       responseJSON(res, result)
@@ -493,12 +502,63 @@ router.post('/getArticleById', function (req, res, next) {
 
 })
 
+router.post('/getSearchList', function (req, res, next) {
+  let param = []
+
+  if (req.body.text === undefined) {
+    responseJSON(res)
+    next()
+  } else {
+    for (let i = 0; i < 4; i++) {
+      param.push('%' + req.body.text + '%')
+    }
+  }
+  if (req.body.page === undefined) {
+    req.body.page = 1
+  }
+  param.push((req.body.page - 1) * LIMIT)
+  param.push(req.body.page * LIMIT)
+  
+  pool.getConnection(function (err, connection) {
+    if (err) {
+      console.log(err.toString())
+      responseJSON(res)
+    } else {
+      connection.query(articleSql.queryListByText, param, function (err, result) {
+        if (err) {
+          console.log(err.toString())
+        }
+        if (result) {
+          var articleList = []
+
+          for (let i = 0; i < result.length; i++) {
+            articleList.push(articleClass(result[i].title, result[i].tags.split(','), result[i].img, result[i].overview, result[i].content, result[i].date, result[i].view, result[i].comment, result[i].like, result[i].type, result[i].id, []))
+          }
+
+          result = {
+            code: 1,
+            msg: 'success',
+            data: {
+              articleList
+            }
+          }
+        }
+        responseJSON(res, result)
+
+        connection.release()
+      })
+    }
+  })
+  
+})
+
 router.post('/addComment', upload.single('img'), function (req, res, next) {
   let param = []
   let img = ''
 
   if (req.body.articleId === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.articleId)
     if (req.file) {
@@ -550,6 +610,7 @@ router.post('/addComment', upload.single('img'), function (req, res, next) {
   ], function (err, result) {
     if (err) {
       responseJSON(res)
+      next()
     }
     if (result === true) {
       result = {
@@ -571,6 +632,7 @@ router.post('/deleteComment', validToken, function (req, res, next) {
     param.push(req.body.commentId)
   } else {
     responseJSON(res)
+    next()
   }
 
   async.waterfall([
@@ -617,6 +679,7 @@ router.post('/deleteComment', validToken, function (req, res, next) {
   ], function (err, result) {
     if (err) {
       responseJSON(res)
+      next()
     }
     if (result) {
       responseJSON(res, result)
@@ -631,6 +694,7 @@ router.post('/getCommentList', function (req, res, next) {
     param.push(req.body.id)
   } else {
     responseJSON(res)
+    next()
   }
 
   if (req.body.page === undefined) {
@@ -673,6 +737,7 @@ router.post('/addLike', function (req, res, next) {
 
   if (req.body.id === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.id)
   }
@@ -707,6 +772,7 @@ router.post('/getBannerList', function (req, res, next) {
     if (err) {
       console.log(err.toString())
       responseJSON(res)
+      next()
     } else {
       connection.query(bannerSql.queryAll, param, function (err, result) {
         if (err) {
@@ -739,6 +805,7 @@ router.post('/updateBanner', upload.single('img'), validToken, function (req, re
   let img = ''
   if (req.body.link === undefined || req.body.id === undefined) {
     responseJSON(res)
+    next()
   } else {
     if (req.file) {
       img = "http://www.jiangfeather.com/images/" + req.file.filename
@@ -823,6 +890,7 @@ router.post('/getTagList', function (req, res, next) {
     if (err) {
       console.log(err.toString())
       responseJSON(res)
+      next()
     }
 
     if (results) {
@@ -840,6 +908,7 @@ router.post('/getTagType', function (req, res, next) {
   let param = []
   if (req.body.tag === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.tag)
   }
@@ -896,6 +965,7 @@ router.post('/updateAboutMe', validToken, function (req, res, next) {
   let param = []
   if (req.body.content === undefined) {
     responseJSON(res)
+    next()
   } else {
     param.push(req.body.content)
   }

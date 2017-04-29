@@ -8,6 +8,7 @@ var articleSql = {
   queryAll: 'SELECT * FROM article ORDER BY article.id DESC LIMIT ?, ?',
   queryListByType: 'SELECT * FROM article WHERE type = ? ORDER BY article.id DESC LIMIT ?, ?',
   queryListByTag: 'SELECT * FROM article WHERE tags like ? ORDER BY article.id DESC LIMIT ?, ?',
+  queryListByText: 'SELECT * FROM article WHERE title like ? OR tags like ? OR overview like ? OR date like ? ORDER BY article.id DESC LIMIT ?, ?',
   getArticleById: 'SELECT * FROM article WHERE id = ?',
   addView: 'UPDATE article SET article.view = article.view + 1 WHERE id = ?',
   addComment: 'UPDATE article SET comment = comment + 1 WHERE id = ?',
