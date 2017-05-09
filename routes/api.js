@@ -34,6 +34,7 @@ var pool = mysql.createPool(dbConfig.mysql)
 
 const LIMIT = 10
 
+// 错误返回
 var responseJSON = function (res, ret) {
   if (typeof ret === 'undefined') {
     res.json({
@@ -45,6 +46,7 @@ var responseJSON = function (res, ret) {
   }
 }
 
+// token验证
 var validToken = function (req, res, next) {
   let param = []
   param.push(req.body.token)
@@ -77,6 +79,8 @@ var validToken = function (req, res, next) {
 }
 
 /* post api. */
+
+// 登陆
 router.post('/login', function (req, res, next) {
   let param = []
   let password = ''
@@ -134,6 +138,7 @@ router.post('/login', function (req, res, next) {
   })
 })
 
+// 添加图片
 router.post('/insertImg', upload.single('img'), function (req, res, next) {
   console.log(req.file)
   if (req.file) {
@@ -152,6 +157,8 @@ router.post('/insertImg', upload.single('img'), function (req, res, next) {
   }
 })
 
+
+// 添加文章
 router.post('/addArticle', upload.single('img'), validToken, function (req, res, next) {
   let param = []
   let img = ''
@@ -198,6 +205,8 @@ router.post('/addArticle', upload.single('img'), validToken, function (req, res,
   })
 })
 
+
+// 更新文章
 router.post('/updateArticle', upload.single('img'), validToken, function (req, res, next) {
   let param = []
   let img = ''
@@ -244,6 +253,7 @@ router.post('/updateArticle', upload.single('img'), validToken, function (req, r
   })
 })
 
+// 删除文章
 router.post('/deleteArticle', validToken, function (req, res, next) {
   let param = []
   if (req.body.id === undefined) {
@@ -276,6 +286,7 @@ router.post('/deleteArticle', validToken, function (req, res, next) {
   })
 })
 
+// 获取文章列表
 router.post('/getArticleList', function (req, res, next) {
   let param = []
 
@@ -317,6 +328,7 @@ router.post('/getArticleList', function (req, res, next) {
   })
 })
 
+// 获取类型文章列表
 router.post('/getArticleListByType', function (req, res, next) {
   let param = []
   if (req.body.type === undefined) {
@@ -364,6 +376,7 @@ router.post('/getArticleListByType', function (req, res, next) {
   })
 })
 
+// 获取标签文章列表
 router.post('/getArticleListByTag', function (req, res, next) {
   let param = []
 
@@ -412,6 +425,7 @@ router.post('/getArticleListByTag', function (req, res, next) {
   })
 })
 
+// 获取单个文章
 router.post('/getArticleById', function (req, res, next) {
   let param = []
 
@@ -502,6 +516,8 @@ router.post('/getArticleById', function (req, res, next) {
 
 })
 
+
+// 获取搜索列表
 router.post('/getSearchList', function (req, res, next) {
   let param = []
 
@@ -552,6 +568,8 @@ router.post('/getSearchList', function (req, res, next) {
   
 })
 
+
+// 添加评论
 router.post('/addComment', upload.single('img'), function (req, res, next) {
   let param = []
   let img = ''
@@ -626,6 +644,8 @@ router.post('/addComment', upload.single('img'), function (req, res, next) {
 
 })
 
+
+// 删除评论
 router.post('/deleteComment', validToken, function (req, res, next) {
   let param = []
   if (req.body.commentId !== undefined) {
@@ -687,6 +707,8 @@ router.post('/deleteComment', validToken, function (req, res, next) {
   })
 })
 
+
+// 获取评论列表
 router.post('/getCommentList', function (req, res, next) {
   let param = []
 
@@ -732,6 +754,8 @@ router.post('/getCommentList', function (req, res, next) {
   })
 })
 
+
+// 添加star
 router.post('/addLike', function (req, res, next) {
   var param = []
 
@@ -766,6 +790,7 @@ router.post('/addLike', function (req, res, next) {
   })
 })
 
+// 获取轮播图列表
 router.post('/getBannerList', function (req, res, next) {
   let param = []
   pool.getConnection(function (err, connection) {
@@ -799,6 +824,7 @@ router.post('/getBannerList', function (req, res, next) {
   })
 })
 
+// 更新轮播图
 router.post('/updateBanner', upload.single('img'), validToken, function (req, res, next) {
   let param = []
 
@@ -841,6 +867,7 @@ router.post('/updateBanner', upload.single('img'), validToken, function (req, re
   })
 })
 
+// 获取标签列表
 router.post('/getTagList', function (req, res, next) {
   async.parallel([
     function (callback) {
@@ -904,6 +931,7 @@ router.post('/getTagList', function (req, res, next) {
   })
 })
 
+// 获取标签类型
 router.post('/getTagType', function (req, res, next) {
   let param = []
   if (req.body.tag === undefined) {
@@ -937,6 +965,7 @@ router.post('/getTagType', function (req, res, next) {
   })
 })
 
+// 获取关于我
 router.post('/getAboutMe', function (req, res ,next) {
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -961,6 +990,7 @@ router.post('/getAboutMe', function (req, res ,next) {
   })
 })
 
+// 更新关于我
 router.post('/updateAboutMe', validToken, function (req, res, next) {
   let param = []
   if (req.body.content === undefined) {
