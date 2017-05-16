@@ -294,7 +294,7 @@ router.post('/getArticleList', function (req, res, next) {
     req.body.page = 1
   }
   param.push((req.body.page - 1) * LIMIT)
-  param.push(req.body.page * LIMIT)
+  param.push(LIMIT)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -342,7 +342,7 @@ router.post('/getArticleListByType', function (req, res, next) {
     req.body.page = 1
   }
   param.push((req.body.page - 1) * LIMIT)
-  param.push(req.body.page * LIMIT)
+  param.push(LIMIT)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -391,7 +391,7 @@ router.post('/getArticleListByTag', function (req, res, next) {
     req.body.page = 1
   }
   param.push((req.body.page - 1) * LIMIT)
-  param.push(req.body.page * LIMIT)
+  param.push(LIMIT)
 
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -533,7 +533,7 @@ router.post('/getSearchList', function (req, res, next) {
     req.body.page = 1
   }
   param.push((req.body.page - 1) * LIMIT)
-  param.push(req.body.page * LIMIT)
+  param.push(LIMIT)
   
   pool.getConnection(function (err, connection) {
     if (err) {
@@ -723,7 +723,7 @@ router.post('/getCommentList', function (req, res, next) {
     req.body.page = 1
   }
   param.push((req.body.page - 1) * LIMIT)
-  param.push(req.body.page * LIMIT)
+  param.push(LIMIT)
 
   pool.getConnection(function (err, connection) {
     if (err) {
