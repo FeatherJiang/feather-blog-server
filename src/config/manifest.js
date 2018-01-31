@@ -14,6 +14,9 @@ const manifest = {
   register: {
     plugins: [
       {
+        plugin: './routes/blog',
+      },
+      {
         plugin: 'inert',
       },
       {
@@ -25,7 +28,7 @@ const manifest = {
           info: {
             version: Pack.version,
             title: 'feather-blog api document',
-            description: '',
+            description: 'feather-blog api',
           },
           tags: [
             {
@@ -37,6 +40,8 @@ const manifest = {
               description: 'management api',
             },
           ],
+          basePath: '/v1',
+          pathPrefixSize: 2,
         },
       },
     ],

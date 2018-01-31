@@ -11,6 +11,7 @@ async function startServer() {
     const server = await Glue.compose(manifest, options);
     await server.start();
   } catch (err) {
+    console.log(err);
     process.exit(1);
   }
 }

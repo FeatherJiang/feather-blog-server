@@ -9,7 +9,7 @@ const config = {
   port: {
     $filter: 'env',
     development: '8080',
-    production: '80',
+    production: '8080',
     $default: '8080',
   },
   database: {
