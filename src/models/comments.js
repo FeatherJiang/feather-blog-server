@@ -1,5 +1,13 @@
+/*
+ * @Introduce: 文章评论模型定义
+ * @Author: feather
+ * @Date: 2018-02-05 17:25:57
+ * @Last Modified by: feather
+ * @Last Modified time: 2018-02-05 17:26:25
+ */
+
 export default function (sequelize, DataTypes) {
-  return sequelize.define('comments', {
+  const comments = sequelize.define('comments', {
     cid: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -36,4 +44,5 @@ export default function (sequelize, DataTypes) {
       allowNull: false,
     },
   });
+  return comments;
 }

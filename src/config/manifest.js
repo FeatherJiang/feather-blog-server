@@ -1,3 +1,11 @@
+/*
+ * @Introduce: hapi插件配置文件
+ * @Author: feather
+ * @Date: 2018-02-05 17:20:23
+ * @Last Modified by: feather
+ * @Last Modified time: 2018-02-07 16:44:54
+ */
+
 import Confidence from 'confidence';
 import Config from './config';
 import Pack from '../../package.json';
@@ -15,6 +23,9 @@ const manifest = {
     plugins: [
       {
         plugin: './routes/blog',
+      },
+      {
+        plugin: './routes/management',
       },
       {
         plugin: 'inert',

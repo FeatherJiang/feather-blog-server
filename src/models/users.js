@@ -1,5 +1,13 @@
+/*
+ * @Introduce: 用户模型定义
+ * @Author: feather
+ * @Date: 2018-02-05 17:27:47
+ * @Last Modified by:   feather
+ * @Last Modified time: 2018-02-05 17:27:47
+ */
+
 export default function (sequelize, DataTypes) {
-  return sequelize.define('users', {
+  const users = sequelize.define('users', {
     uid: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -40,4 +48,5 @@ export default function (sequelize, DataTypes) {
       allowNull: true,
     },
   });
+  return users;
 }
