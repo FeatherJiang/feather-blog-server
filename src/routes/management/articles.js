@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:14:59
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-07 14:40:08
+ * @Last Modified time: 2018-02-13 22:42:01
  */
 
 import Joi from 'joi';
@@ -19,12 +19,12 @@ export default [
           overview: Joi.string().required(),
           content: Joi.string().required(),
           banner: Joi.string().required(),
-          types: Joi.array().required(),
-          tags: Joi.array().required(),
+          types: Joi.array().items(Joi.number().integer()).required(),
+          tags: Joi.array().items(Joi.number().integer()).required(),
         },
       },
     },
-    method: ['POST'],
+    method: 'POST',
     path: '/v1/articles',
     handler: Controllers.articles.postArticles,
   },
@@ -33,15 +33,15 @@ export default [
       tags: ['api', 'management'],
       validate: {
         params: {
-          aid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
         },
         payload: {
           title: Joi.string().optional(),
           overview: Joi.string().optional(),
           content: Joi.string().optional(),
           banner: Joi.string().optional(),
-          types: Joi.array().optional(),
-          tags: Joi.array().optional(),
+          types: Joi.array().items(Joi.number().integer()).optional(),
+          tags: Joi.array().items(Joi.number().integer()).optional(),
         },
       },
     },
@@ -54,8 +54,8 @@ export default [
       tags: ['api', 'management'],
       validate: {
         params: {
-          aid: Joi.string().required(),
-          cid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
+          cid: Joi.number().integer().required(),
         },
       },
     },

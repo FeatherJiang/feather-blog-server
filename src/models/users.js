@@ -2,8 +2,8 @@
  * @Introduce: 用户模型定义
  * @Author: feather
  * @Date: 2018-02-05 17:27:47
- * @Last Modified by:   feather
- * @Last Modified time: 2018-02-05 17:27:47
+ * @Last Modified by: feather
+ * @Last Modified time: 2018-02-12 15:43:47
  */
 
 export default function (sequelize, DataTypes) {
@@ -25,9 +25,6 @@ export default function (sequelize, DataTypes) {
     avatar: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isUrl: true,
-      },
     },
     mail: {
       type: DataTypes.STRING,

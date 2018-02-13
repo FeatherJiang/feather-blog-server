@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:17:07
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-06 10:47:36
+ * @Last Modified time: 2018-02-12 13:10:52
  */
 
 import Joi from 'joi';
@@ -16,7 +16,7 @@ export default [
       tags: ['api', 'management'],
       validate: {
         params: {
-          uid: Joi.string().required(),
+          uid: Joi.number().integer().required(),
         },
       },
     },

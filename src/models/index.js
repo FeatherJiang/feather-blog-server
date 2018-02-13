@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:26:39
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-07 16:11:00
+ * @Last Modified time: 2018-02-13 23:34:28
  */
 
 import fs from 'fs';
@@ -33,10 +33,25 @@ fs
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+db.articles.belongsToMany(db.types, {
+  through: db.articleTypes,
+  foreignKey: 'aid',
+  otherKey: 'tid',
+});
+db.articles.belongsToMany(db.tags, {
+  through: db.articleTags,
+  foreignKey: 'aid',
+  otherKey: 'tid',
+});
+db.types.belongsToMany(db.articles, {
+  through: db.articleTypes,
+  foreignKey: 'tid',
+  otherKey: 'aid',
+});
+db.tags.belongsToMany(db.articles, {
+  through: db.articleTags,
+  foreignKey: 'tid',
+  otherKey: 'aid',
 });
 
 db.sequelize.sync({ logging: false });

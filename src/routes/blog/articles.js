@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:03
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-08 10:17:23
+ * @Last Modified time: 2018-02-13 21:13:07
  */
 
 import Joi from 'joi';
@@ -15,8 +15,9 @@ export default [
       tags: ['api', 'blog', 'management'],
       validate: {
         query: {
-          page: Joi.string().required(),
-          limit: Joi.string().required(),
+          page: Joi.number().integer().required(),
+          limit: Joi.number().integer().required(),
+          order: Joi.string().valid(['ASC', 'DESC']).required(),
           key: Joi.string().optional(),
         },
       },
@@ -32,11 +33,16 @@ export default [
         params: {
           type: Joi.string().required(),
         },
+        query: {
+          page: Joi.number().integer().required(),
+          limit: Joi.number().integer().required(),
+          order: Joi.string().valid(['ASC', 'DESC']).required(),
+        },
       },
     },
     method: 'GET',
     path: '/v1/types/{type}/articles',
-    handler: Controllers.articles.getArticlesByTypes,
+    handler: Controllers.articles.getArticlesByType,
   },
   {
     config: {
@@ -46,8 +52,9 @@ export default [
           tag: Joi.string().required(),
         },
         query: {
-          page: Joi.string().required(),
-          limit: Joi.string().required(),
+          page: Joi.number().integer().required(),
+          limit: Joi.number().integer().required(),
+          order: Joi.string().valid(['ASC', 'DESC']).required(),
         },
       },
     },
@@ -60,7 +67,7 @@ export default [
       tags: ['api', 'blog', 'management'],
       validate: {
         params: {
-          aid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
         },
       },
     },
@@ -73,7 +80,7 @@ export default [
       tags: ['api', 'blog'],
       validate: {
         params: {
-          aid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
         },
       },
     },
@@ -86,7 +93,7 @@ export default [
       tags: ['api', 'blog'],
       validate: {
         params: {
-          aid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
         },
       },
     },
@@ -99,11 +106,12 @@ export default [
       tags: ['api', 'blog', 'management'],
       validate: {
         params: {
-          aid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
         },
         query: {
-          page: Joi.string().required(),
-          limit: Joi.string().required(),
+          page: Joi.number().integer().required(),
+          limit: Joi.number().integer().required(),
+          order: Joi.string().valid(['ASC', 'DESC']).required(),
         },
       },
     },
@@ -116,10 +124,10 @@ export default [
       tags: ['api', 'blog', 'management'],
       validate: {
         params: {
-          aid: Joi.string().required(),
+          aid: Joi.number().integer().required(),
         },
         payload: {
-          pid: Joi.string().required(),
+          pid: Joi.number().integer().required(),
           avatar: Joi.string().optional(),
           name: Joi.string().optional(),
           mail: Joi.string().optional(),
@@ -145,6 +153,11 @@ export default [
       validate: {
         params: {
           date: Joi.string().required(),
+        },
+        query: {
+          page: Joi.number().integer().required(),
+          limit: Joi.number().integer().required(),
+          order: Joi.string().valid(['ASC', 'DESC']).required(),
         },
       },
     },

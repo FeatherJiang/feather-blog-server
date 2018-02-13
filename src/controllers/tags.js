@@ -3,16 +3,82 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:44
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-06 10:43:50
+ * @Last Modified time: 2018-02-13 22:26:41
  */
 
+import statusCode from '../config/statusCode';
 import models from '../models';
 
 export default {
-  getTags(request, h) {
-    return h.response({ code: 403 }).code(403);
+  async getTags(request, h) {
+    try {
+      const tags = await models.tags.findAll();
+      const res = {
+        statusCode: 200,
+        message: statusCode.get('/200'),
+        data: tags,
+      };
+      return h.response(res);
+    } catch (error) {
+      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+    }
   },
-  putTag(request, h) {
-    return h.response({ code: 403 }).code(403);
+  async postTags(request, h) {
+    const { name } = request.payload;
+    try {
+      const tags = await models.tags.create({
+        name,
+      });
+      const res = {
+        statusCode: 201,
+        message: statusCode.get('/201'),
+        data: tags,
+      };
+      return h.response(res);
+    } catch (error) {
+      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+    }
+  },
+  async putTag(request, h) {
+    const { tid } = request.params;
+    const { name } = request.payload;
+    try {
+      const tags = await models.tags.update(
+        {
+          name,
+        },
+        {
+          where: {
+            tid,
+          },
+          returning: true,
+        },
+      );
+      const res = {
+        statusCode: 201,
+        message: statusCode.get('/201'),
+        data: tags[1],
+      };
+      return h.response(res);
+    } catch (error) {
+      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+    }
+  },
+  async delTag(request, h) {
+    const { tid } = request.params;
+    try {
+      await models.tags.destroy({
+        where: {
+          tid,
+        },
+      });
+      const res = {
+        statusCode: 204,
+        message: statusCode.get('/204'),
+      };
+      return h.response(res);
+    } catch (error) {
+      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+    }
   },
 };
