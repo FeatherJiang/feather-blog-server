@@ -9,6 +9,7 @@
     "hapi-swagger": "^9.0.2",
     "inert": "^5.1.0",
     "joi": "^13.1.1",
+    "jsonwebtoken": "^8.1.1",
     "pg": "^7.4.1",
     "sequelize": "^4.32.2",
     "vision": "^5.3.1"

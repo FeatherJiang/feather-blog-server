@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:27:47
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-12 15:43:47
+ * @Last Modified time: 2018-02-14 20:44:08
  */
 
 export default function (sequelize, DataTypes) {
@@ -17,8 +17,13 @@ export default function (sequelize, DataTypes) {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    salt: {
       type: DataTypes.STRING,
       allowNull: false,
     },

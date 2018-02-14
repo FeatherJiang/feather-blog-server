@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:14:24
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-05 17:20:15
+ * @Last Modified time: 2018-02-14 20:55:09
  */
 
 import Confidence from 'confidence';
@@ -48,6 +48,11 @@ const config = {
         idle: 10000,
       },
     },
+  },
+  secret: {
+    $filter: 'env',
+    development: 'feather',
+    production: 'feather',
   },
 };
 

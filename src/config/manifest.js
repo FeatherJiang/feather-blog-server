@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:20:23
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-07 16:44:54
+ * @Last Modified time: 2018-02-14 21:42:22
  */
 
 import Confidence from 'confidence';
@@ -21,6 +21,9 @@ const manifest = {
   },
   register: {
     plugins: [
+      {
+        plugin: './plugin/JWT.js',
+      },
       {
         plugin: './routes/blog',
       },

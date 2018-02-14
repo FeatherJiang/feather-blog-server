@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:32:27
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-12 13:07:06
+ * @Last Modified time: 2018-02-14 21:48:48
  */
 
 import Joi from 'joi';
@@ -26,7 +26,6 @@ export default [
   // },
   {
     config: {
-      handler: Controllers.users.getUser,
       tags: ['api', 'blog'],
       validate: {
         params: {
@@ -36,5 +35,6 @@ export default [
     },
     method: 'GET',
     path: '/v1/users/{uid}',
+    handler: Controllers.users.getUser,
   },
 ];
