@@ -3,13 +3,14 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-08 14:35:04
+ * @Last Modified time: 2018-02-15 20:53:51
  */
 
 import users from './users';
 import articles from './articles';
 import types from './types';
 import tags from './tags';
+import files from './files';
 import statusCode from '../../config/statusCode';
 
 function failAction(request, h, error) {
@@ -18,7 +19,7 @@ function failAction(request, h, error) {
 }
 
 function register(server) {
-  const routes = [users, articles, types, tags];
+  const routes = [users, articles, types, tags, files];
   routes.forEach((item) => {
     item.forEach((route) => {
       const router = route;

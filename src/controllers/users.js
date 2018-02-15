@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:24:31
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-14 22:57:18
+ * @Last Modified time: 2018-02-15 11:54:27
  */
 
 import crypto from 'crypto';
@@ -16,7 +16,7 @@ export default {
   async getToken(request, h) {
     const { name, password } = request.payload;
     try {
-      const users = await models.users.findAll({
+      const users = await models.users.findOne({
         where: {
           name,
         },
@@ -27,12 +27,13 @@ export default {
       if (verifyPassword === users.password) {
         const token = jwt.sign(
           {
+            uid: users.uid,
             name: users.name,
             avatar: users.avatar,
             mail: users.mail,
             url: users.url,
           },
-          config.getDefault('/secret'),
+          config.defaultGet('/secret'),
           {
             expiresIn: '1 days',
           },
