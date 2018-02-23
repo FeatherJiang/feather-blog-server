@@ -3,13 +3,24 @@
  * @Author: feather
  * @Date: 2018-02-15 13:12:40
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-15 21:46:08
+ * @Last Modified time: 2018-02-23 16:36:19
  */
 
 import Joi from 'joi';
 import Controllers from '../../controllers';
 
 export default [
+  {
+    config: {
+      state: {
+        failAction: 'ignore',
+        parse: false,
+      },
+    },
+    method: 'GET',
+    path: '/{param*}',
+    handler: Controllers.files.getFile,
+  },
   {
     config: {
       tags: ['api', 'blog', 'management'],

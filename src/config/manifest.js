@@ -3,9 +3,10 @@
  * @Author: feather
  * @Date: 2018-02-05 17:20:23
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-14 21:42:22
+ * @Last Modified time: 2018-02-23 16:18:59
  */
 
+import Path from 'path';
 import Confidence from 'confidence';
 import Config from './config';
 import Pack from '../../package.json';
@@ -18,9 +19,20 @@ const manifest = {
   $meta: 'hapi server plugin config',
   server: {
     port: Config.defaultGet('/port'),
+    routes: {
+      files: {
+        relativeTo: Path.join(__dirname, '../../public'),
+      },
+    },
   },
   register: {
     plugins: [
+      {
+        plugin: 'inert',
+      },
+      {
+        plugin: 'vision',
+      },
       {
         plugin: './plugin/JWT.js',
       },
@@ -29,12 +41,6 @@ const manifest = {
       },
       {
         plugin: './routes/management',
-      },
-      {
-        plugin: 'inert',
-      },
-      {
-        plugin: 'vision',
       },
       {
         plugin: 'hapi-swagger',
