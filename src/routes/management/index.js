@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:15:41
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-10 10:44:34
+ * @Last Modified time: 2018-03-06 23:55:16
  */
 
 import users from './users';
@@ -22,7 +22,10 @@ function register(server) {
   routes.forEach((item) => {
     item.forEach((route) => {
       const router = route;
-      router.config.cors = true;
+      router.config.cors = {
+        origin: ['*'],
+        credentials: true,
+      };
       if (route.config.validate) {
         router.config.validate.failAction = failAction;
       }
