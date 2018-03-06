@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:14:24
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-14 20:55:09
+ * @Last Modified time: 2018-03-06 21:59:11
  */
 
 import Confidence from 'confidence';
@@ -14,6 +14,12 @@ const defaultCriteria = {
 
 const config = {
   $meta: 'port, database config',
+  host: {
+    $filter: 'env',
+    development: 'localhost',
+    production: 'localhost',
+    $default: 'localhost',
+  },
   port: {
     $filter: 'env',
     development: '8080',

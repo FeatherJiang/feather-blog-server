@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:20:23
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-06 20:10:23
+ * @Last Modified time: 2018-03-06 21:59:45
  */
 
 import Path from 'path';
@@ -18,6 +18,7 @@ const defaultCriteria = {
 const manifest = {
   $meta: 'hapi server plugin config',
   server: {
+    host: Config.defaultGet('/host'),
     port: Config.defaultGet('/port'),
     routes: {
       files: {
