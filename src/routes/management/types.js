@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:16:30
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-13 22:42:28
+ * @Last Modified time: 2018-03-06 20:09:49
  */
 
 import Joi from 'joi';
@@ -21,7 +21,7 @@ export default [
       },
     },
     method: 'POST',
-    path: '/v1/types',
+    path: '/api/v1/types',
   },
   {
     config: {
@@ -37,7 +37,7 @@ export default [
       },
     },
     method: ['PUT', 'PATCH'],
-    path: '/v1/types/{tid}',
+    path: '/api/v1/types/{tid}',
   },
   {
     config: {
@@ -50,6 +50,6 @@ export default [
       },
     },
     method: 'DELETE',
-    path: '/v1/types/{tid}',
+    path: '/api/v1/types/{tid}',
   },
 ];

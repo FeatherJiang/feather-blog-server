@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 13:12:40
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-23 16:36:19
+ * @Last Modified time: 2018-03-06 20:08:52
  */
 
 import Joi from 'joi';
@@ -32,7 +32,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/imgs/{date}/{name}',
+    path: '/api/v1/imgs/{date}/{name}',
     handler: Controllers.files.getImg,
   },
   {
@@ -57,7 +57,7 @@ export default [
       },
     },
     method: 'POST',
-    path: '/v1/imgs',
+    path: '/api/v1/imgs',
     handler: Controllers.files.postImgs,
   },
 ];

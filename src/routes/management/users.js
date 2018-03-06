@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:17:07
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-15 11:42:54
+ * @Last Modified time: 2018-03-06 20:09:56
  */
 
 import Joi from 'joi';
@@ -21,7 +21,7 @@ export default [
       },
     },
     method: 'POST',
-    path: '/v1/token',
+    path: '/api/v1/token',
     handler: Controllers.users.getToken,
   },
   {
@@ -46,7 +46,7 @@ export default [
       },
     },
     method: ['PUT', 'PATCH'],
-    path: '/v1/users/{uid}',
+    path: '/api/v1/users/{uid}',
     handler: Controllers.users.putUser,
   },
 ];

@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:32:27
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-14 21:48:48
+ * @Last Modified time: 2018-03-06 20:09:19
  */
 
 import Joi from 'joi';
@@ -34,7 +34,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/users/{uid}',
+    path: '/api/v1/users/{uid}',
     handler: Controllers.users.getUser,
   },
 ];

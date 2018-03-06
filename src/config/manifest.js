@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:20:23
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-23 16:18:59
+ * @Last Modified time: 2018-03-06 20:10:23
  */
 
 import Path from 'path';
@@ -60,8 +60,8 @@ const manifest = {
               description: 'management api',
             },
           ],
-          basePath: '/v1',
-          pathPrefixSize: 2,
+          basePath: '/api/v1',
+          pathPrefixSize: 3,
         },
       },
     ],

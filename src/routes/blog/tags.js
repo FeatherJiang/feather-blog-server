@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:56
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-06 10:17:35
+ * @Last Modified time: 2018-03-06 20:09:13
  */
 
 import Controllers from '../../controllers';
@@ -15,6 +15,6 @@ export default [
       tags: ['api', 'blog', 'management'],
     },
     method: 'GET',
-    path: '/v1/tags',
+    path: '/api/v1/tags',
   },
 ];

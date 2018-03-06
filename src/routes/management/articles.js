@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:14:59
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-13 22:42:01
+ * @Last Modified time: 2018-03-06 20:09:30
  */
 
 import Joi from 'joi';
@@ -25,7 +25,7 @@ export default [
       },
     },
     method: 'POST',
-    path: '/v1/articles',
+    path: '/api/v1/articles',
     handler: Controllers.articles.postArticles,
   },
   {
@@ -46,7 +46,7 @@ export default [
       },
     },
     method: ['PUT', 'PATCH'],
-    path: '/v1/articles/{aid}',
+    path: '/api/v1/articles/{aid}',
     handler: Controllers.articles.putArticle,
   },
   {
@@ -60,7 +60,7 @@ export default [
       },
     },
     method: 'DELETE',
-    path: '/v1/articles/{aid}/comments/{cid}',
+    path: '/api/v1/articles/{aid}/comments/{cid}',
     handler: Controllers.articles.delArticleComment,
   },
 ];

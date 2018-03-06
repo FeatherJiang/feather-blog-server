@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:03
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-13 21:13:07
+ * @Last Modified time: 2018-03-06 20:08:29
  */
 
 import Joi from 'joi';
@@ -23,7 +23,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/articles',
+    path: '/api/v1/articles',
     handler: Controllers.articles.getArticles,
   },
   {
@@ -41,7 +41,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/types/{type}/articles',
+    path: '/api/v1/types/{type}/articles',
     handler: Controllers.articles.getArticlesByType,
   },
   {
@@ -59,7 +59,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/tags/{tag}/articles',
+    path: '/api/v1/tags/{tag}/articles',
     handler: Controllers.articles.getArticlesByTag,
   },
   {
@@ -72,7 +72,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/articles/{aid}',
+    path: '/api/v1/articles/{aid}',
     handler: Controllers.articles.getArticle,
   },
   {
@@ -85,7 +85,7 @@ export default [
       },
     },
     method: 'PUT',
-    path: '/v1/articles/{aid}/star',
+    path: '/api/v1/articles/{aid}/star',
     handler: Controllers.articles.putArticleStar,
   },
   {
@@ -98,7 +98,7 @@ export default [
       },
     },
     method: 'DELETE',
-    path: '/v1/articles/{aid}/star',
+    path: '/api/v1/articles/{aid}/star',
     handler: Controllers.articles.delArticleStar,
   },
   {
@@ -116,7 +116,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/articles/{aid}/comments',
+    path: '/api/v1/articles/{aid}/comments',
     handler: Controllers.articles.getArticleComments,
   },
   {
@@ -136,7 +136,7 @@ export default [
       },
     },
     method: 'POST',
-    path: '/v1/articles/{aid}/comments',
+    path: '/api/v1/articles/{aid}/comments',
     handler: Controllers.articles.postArticleComments,
   },
   {
@@ -144,7 +144,7 @@ export default [
       tags: ['api', 'blog'],
     },
     method: 'GET',
-    path: '/v1/archive',
+    path: '/api/v1/archive',
     handler: Controllers.articles.getArchive,
   },
   {
@@ -162,7 +162,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/v1/archive/{date}/articles',
+    path: '/api/v1/archive/{date}/articles',
     handler: Controllers.articles.getArchiveArticles,
   },
 ];
