@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:03
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-06 23:55:50
+ * @Last Modified time: 2018-03-07 23:33:21
  */
 
 import Joi from 'joi';
@@ -152,7 +152,8 @@ export default [
       tags: ['api', 'blog'],
       validate: {
         params: {
-          date: Joi.string().required(),
+          year: Joi.string().required(),
+          month: Joi.string().required(),
         },
         query: {
           page: Joi.number().integer().required(),
@@ -162,7 +163,7 @@ export default [
       },
     },
     method: 'GET',
-    path: '/api/v1/archive/{date}/articles',
+    path: '/api/v1/archive/{year}/{month}/articles',
     handler: Controllers.articles.getArchiveArticles,
   },
 ];

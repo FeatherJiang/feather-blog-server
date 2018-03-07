@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:44
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-13 22:26:41
+ * @Last Modified time: 2018-03-07 21:32:30
  */
 
 import statusCode from '../config/statusCode';
@@ -12,7 +12,15 @@ import models from '../models';
 export default {
   async getTags(request, h) {
     try {
-      const tags = await models.tags.findAll();
+      const tags = await models.tags.findAll({
+        include: [
+          { model: models.articles },
+        ],
+      });
+      for (let i = 0; i < tags.length; i += 1) {
+        tags[i].dataValues.articleCount = tags[i].articles.length;
+        delete tags[i].dataValues.articles;
+      }
       const res = {
         statusCode: 200,
         message: statusCode.get('/200'),

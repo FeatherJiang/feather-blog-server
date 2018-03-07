@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-06 22:10:12
+ * @Last Modified time: 2018-03-07 23:32:01
  */
 
 import statusCode from '../config/statusCode';
@@ -432,13 +432,24 @@ export default {
   async getArchive(request, h) {
     try {
       const articles = await models.articles.findAll();
-      const archiveList = new Set();
+      const archiveList = [];
+      const archiveObj = {};
       articles.forEach((item) => {
         const date = new Date(item.createdAt);
         const year = date.getFullYear();
         const month = date.getMonth() >= 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
         const archive = `${year}/${month}`;
-        archiveList.add(archive);
+        if (archiveList[archive]) {
+          archiveObj[archive] += 1;
+        } else {
+          archiveObj[archive] = 1;
+        }
+      });
+      Object.keys(archiveObj).forEach((item) => {
+        const temp = {};
+        temp.time = item;
+        temp.articleCount = archiveObj[item];
+        archiveList.push(temp);
       });
       const res = {
         statusCode: 200,
@@ -451,11 +462,9 @@ export default {
     }
   },
   async getArchiveArticles(request, h) {
-    const { date } = request.params;
+    const { year, month } = request.params;
     const { page, limit, order } = request.query;
     const offset = (page - 1) * limit;
-    const year = date.split('/')[0];
-    const month = date.split('/')[1];
     try {
       const startTime = new Date(year, month - 1, 1);
       const endTime = new Date(year, month, 0);

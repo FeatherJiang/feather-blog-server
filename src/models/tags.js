@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:27:18
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-12 22:02:04
+ * @Last Modified time: 2018-03-07 23:17:27
  */
 
 export default function (sequelize, DataTypes) {
@@ -17,6 +17,7 @@ export default function (sequelize, DataTypes) {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
   });
   return tags;

@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:24:08
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-13 22:27:53
+ * @Last Modified time: 2018-03-07 21:33:28
  */
 
 import statusCode from '../config/statusCode';
@@ -12,7 +12,15 @@ import models from '../models';
 export default {
   async getTypes(request, h) {
     try {
-      const types = await models.types.findAll();
+      const types = await models.types.findAll({
+        include: [
+          { model: models.articles },
+        ],
+      });
+      for (let i = 0; i < types.length; i += 1) {
+        types[i].dataValues.articleCount = types[i].articles.length;
+        delete types[i].dataValues.articles;
+      }
       const res = {
         statusCode: 200,
         message: statusCode.get('/200'),
