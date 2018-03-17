@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:24:31
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-15 11:54:27
+ * @Last Modified time: 2018-03-13 22:19:58
  */
 
 import crypto from 'crypto';
@@ -70,7 +70,7 @@ export default {
   async getUser(request, h) {
     const { uid } = request.params;
     try {
-      const users = await models.users.findAll({
+      const users = await models.users.findOne({
         attributes: { exclude: ['password', 'salt'] },
         where: {
           uid,

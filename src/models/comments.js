@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:25:57
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-12 20:06:06
+ * @Last Modified time: 2018-03-14 10:50:50
  */
 
 export default function (sequelize, DataTypes) {
@@ -31,7 +31,7 @@ export default function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    mail: {
+    email: {
       type: DataTypes.STRING,
       allowNull: true,
     },

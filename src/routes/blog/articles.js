@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:03
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-07 23:33:21
+ * @Last Modified time: 2018-03-14 11:16:55
  */
 
 import Joi from 'joi';
@@ -128,9 +128,9 @@ export default [
         },
         payload: {
           pid: Joi.number().integer().required(),
-          avatar: Joi.string().optional(),
-          name: Joi.string().optional(),
-          mail: Joi.string().optional(),
+          avatar: Joi.string().empty(''),
+          name: Joi.string().empty(''),
+          email: Joi.string().empty(''),
           content: Joi.string().required(),
         },
       },

@@ -3,13 +3,25 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-07 23:32:01
+ * @Last Modified time: 2018-03-16 11:55:29
  */
 
 import statusCode from '../config/statusCode';
 import models from '../models';
 
 const { Op } = models.Sequelize;
+
+function parseComments(comments, pid) {
+  const list = [];
+  for (let i = 0; i < comments.rows.length; i += 1) {
+    if (comments.rows[i].pid === pid) {
+      const temp = comments.rows[i];
+      temp.children = parseComments(comments, comments.rows[i].cid);
+      list.push(temp);
+    }
+  }
+  return list;
+}
 
 export default {
   async getArticles(request, h) {
@@ -175,7 +187,7 @@ export default {
         ],
       });
       const res = {
-        code: 200,
+        statusCode: 200,
         message: statusCode.get('/200'),
         data: article,
       };
@@ -206,7 +218,7 @@ export default {
         ],
       });
       const res = {
-        code: 200,
+        statusCode: 200,
         message: statusCode.get('/200'),
         data: article,
       };
@@ -227,8 +239,20 @@ export default {
           { model: models.tags },
         ],
       });
+      if (article) {
+        await models.articles.update(
+          {
+            watchNum: article.watchNum + 1,
+          },
+          {
+            where: {
+              aid,
+            },
+          },
+        );
+      }
       const res = {
-        code: 200,
+        statusCode: 200,
         message: statusCode.get('/200'),
         data: article,
       };
@@ -313,24 +337,29 @@ export default {
   async putArticleStar(request, h) {
     const { aid } = request.params;
     try {
-      const oldArticle = await models.articles.findOne({
-        attributes: ['starNum'],
-        where: {
-          aid,
-        },
-      });
-      const article = await models.articles.update({
-        starNum: oldArticle.starNum + 1,
-      }, {
-        where: {
-          aid,
-        },
-        returning: true,
+      const result = await models.sequelize.transaction(async (t) => {
+        const oldArticle = await models.articles.findOne({
+          attributes: ['starNum'],
+          where: {
+            aid,
+          },
+          transaction: t,
+        });
+        const article = await models.articles.update({
+          starNum: oldArticle.starNum + 1,
+        }, {
+          where: {
+            aid,
+          },
+          returning: true,
+          transaction: t,
+        });
+        return article[1];
       });
       const res = {
         statusCode: 201,
         message: statusCode.get('/201'),
-        data: article[1],
+        data: result,
       };
       return h.response(res);
     } catch (error) {
@@ -340,19 +369,27 @@ export default {
   async delArticleStar(request, h) {
     const { aid } = request.params;
     try {
-      const oldArticle = await models.articles.findOne({
-        attributes: ['starNum'],
-        where: {
-          aid,
-        },
+      await models.sequelize.transaction(async (t) => {
+        const oldArticle = await models.articles.findOne({
+          attributes: ['starNum'],
+          where: {
+            aid,
+          },
+          transaction: t,
+        });
+        await models.articles.update(
+          {
+            starNum: (oldArticle.starNum - 1) >= 1 ? oldArticle.starNum - 1 : 0,
+          },
+          {
+            where: {
+              aid,
+            },
+            transaction: t,
+          },
+        );
       });
-      await models.articles.update({
-        starNum: (oldArticle.starNum - 1) >= 1 ? oldArticle.starNum - 1 : 0,
-      }, {
-        where: {
-          aid,
-        },
-      });
+
       const res = {
         statusCode: 204,
         message: statusCode.get('/204'),
@@ -367,7 +404,7 @@ export default {
     const { page, limit, order } = request.query;
     const offset = (page - 1) * limit;
     try {
-      const comments = await models.comments.findAndCountAll({
+      const result = await models.comments.findAndCountAll({
         limit,
         offset,
         order: [
@@ -377,10 +414,21 @@ export default {
           aid,
         },
       });
+      const comments = JSON.parse(JSON.stringify(result));
+      const commentList = {
+        count: comments.count,
+        rows: [],
+      };
+      for (let i = 0; i < comments.rows.length; i += 1) {
+        comments.rows[i].children = [];
+      }
+
+      commentList.rows = parseComments(comments, 0);
+
       const res = {
         statusCode: 200,
         message: statusCode.get('/200'),
-        data: comments,
+        data: commentList,
       };
       return h.response(res);
     } catch (error) {
@@ -390,21 +438,45 @@ export default {
   async postArticleComments(request, h) {
     const { aid } = request.params;
     const {
-      pid, avatar = '', name = '匿名用户', mail = '', content,
+      pid, avatar = '/api/v1/imgs/default/anonymous-avatar.png', name = 'anonymous', email = '', content,
     } = request.payload;
     try {
-      const comment = await models.comments.create({
-        aid,
-        pid,
-        avatar,
-        name,
-        mail,
-        content,
+      const result = await models.sequelize.transaction(async (t) => {
+        const comment = await models.comments.create(
+          {
+            aid,
+            pid,
+            avatar,
+            name,
+            email,
+            content,
+          },
+          { transaction: t },
+        );
+        const article = await models.articles.findOne({
+          attributes: ['commentsNum'],
+          where: {
+            aid,
+          },
+          transaction: t,
+        });
+        await models.articles.update(
+          {
+            commentsNum: article.commentsNum + 1,
+          },
+          {
+            where: {
+              aid,
+            },
+            transaction: t,
+          },
+        );
+        return comment;
       });
       const res = {
         statusCode: 201,
         message: statusCode.get('/201'),
-        data: comment,
+        data: result,
       };
       return h.response(res);
     } catch (error) {
@@ -414,12 +486,34 @@ export default {
   async delArticleComment(request, h) {
     const { aid, cid } = request.params;
     try {
-      await models.comments.destroy({
-        where: {
-          cid,
-          aid,
-        },
+      await models.sequelize.transaction(async (t) => {
+        await models.comments.destroy({
+          where: {
+            cid,
+            aid,
+          },
+          transaction: t,
+        });
+        const article = await models.articles.findOne({
+          attributes: ['commentsNum'],
+          where: {
+            aid,
+          },
+          transaction: t,
+        });
+        await models.articles.update(
+          {
+            commentsNum: article.commentsNum - 1,
+          },
+          {
+            where: {
+              aid,
+            },
+            transaction: t,
+          },
+        );
       });
+
       const res = {
         statusCode: 204,
         message: statusCode.get('/204'),
@@ -439,7 +533,7 @@ export default {
         const year = date.getFullYear();
         const month = date.getMonth() >= 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
         const archive = `${year}/${month}`;
-        if (archiveList[archive]) {
+        if (archiveObj[archive]) {
           archiveObj[archive] += 1;
         } else {
           archiveObj[archive] = 1;

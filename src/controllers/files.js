@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 20:52:09
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-23 16:47:02
+ * @Last Modified time: 2018-03-17 15:43:23
  */
 
 import crypto from 'crypto';
@@ -33,7 +33,7 @@ function saveFile(file) {
       const path = `${__dirname}/../../uploads/${dirName}/${filename}${ext}`;
       fs.writeFile(path, Buffer.concat(fileBuffer), (error) => {
         if (error) reject(error);
-        resolve({ url: `/v1/imgs/${dirName}/${filename}${ext}` });
+        resolve({ url: `/api/v1/imgs/${dirName}/${filename}${ext}` });
       });
     });
   });
@@ -48,13 +48,13 @@ export default {
     }
     return h.file(path);
   },
-  async getImg(request, h) {
+  getImg(request, h) {
     const { date, name } = request.params;
     const path = `${__dirname}/../../uploads/${date}/${name}`;
     if (!fs.existsSync(path)) {
       return h.response({ statusCode: 404, error: 'Not Found', message: statusCode.get('/404') }).code(404);
     }
-    return h.file(path);
+    return h.file(path, { confine: false });
   },
   async postImgs(request, h) {
     const data = request.payload;
