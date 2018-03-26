@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-16 11:55:29
+ * @Last Modified time: 2018-03-23 11:46:09
  */
 
 import statusCode from '../config/statusCode';
@@ -171,6 +171,7 @@ export default {
     const offset = (page - 1) * limit;
     try {
       const article = await models.articles.findAndCountAll({
+        subQuery: false,
         offset,
         limit,
         order: [
@@ -202,6 +203,7 @@ export default {
     const offset = (page - 1) * limit;
     try {
       const article = await models.articles.findAndCountAll({
+        subQuery: false,
         offset,
         limit,
         order: [
