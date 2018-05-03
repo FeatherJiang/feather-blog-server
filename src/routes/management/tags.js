@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:16:16
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-06 20:09:40
+ * @Last Modified time: 2018-04-10 11:57:57
  */
 
 import Joi from 'joi';
@@ -12,9 +12,12 @@ import Controllers from '../../controllers';
 export default [
   {
     config: {
-      handler: Controllers.tags.postTags,
+      auth: 'management',
       tags: ['api', 'management'],
       validate: {
+        // headers: {
+        //   Authorization: Joi.string().required(),
+        // },
         payload: {
           name: Joi.string().required(),
         },
@@ -22,14 +25,20 @@ export default [
     },
     method: 'POST',
     path: '/api/v1/tags',
+    handler: Controllers.tags.postTags,
   },
   {
     config: {
-      handler: Controllers.tags.putTag,
+      auth: 'management',
       tags: ['api', 'management'],
       validate: {
+        // headers: {
+        //   Authorization: Joi.string().required(),
+        // },
         params: {
-          tid: Joi.number().integer().required(),
+          tid: Joi.number()
+            .integer()
+            .required(),
         },
         payload: {
           name: Joi.string().required(),
@@ -38,18 +47,25 @@ export default [
     },
     method: ['PUT', 'PATCH'],
     path: '/api/v1/tags/{tid}',
+    handler: Controllers.tags.putTag,
   },
   {
     config: {
-      handler: Controllers.tags.delTag,
+      auth: 'management',
       tags: ['api', 'management'],
       validate: {
+        // headers: {
+        //   Authorization: Joi.string().required(),
+        // },
         params: {
-          tid: Joi.number().integer().required(),
+          tid: Joi.number()
+            .integer()
+            .required(),
         },
       },
     },
     method: 'DELETE',
     path: '/api/v1/tags/{tid}',
+    handler: Controllers.tags.delTag,
   },
 ];

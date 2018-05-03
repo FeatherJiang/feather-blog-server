@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 20:52:09
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-17 15:43:23
+ * @Last Modified time: 2018-05-03 19:26:19
  */
 
 import crypto from 'crypto';
@@ -14,7 +14,10 @@ import statusCode from '../config/statusCode';
 function saveFile(file) {
   return new Promise((resolve, reject) => {
     const date = new Date();
-    const dirName = date.getFullYear() + (date.getMonth >= 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`) + (date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`);
+    const dirName =
+      date.getFullYear() +
+      (date.getMonth >= 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`) +
+      (date.getDate() >= 10 ? date.getDate() : `0${date.getDate()}`);
     const md5 = crypto.createHash('md5');
     const fileBuffer = [];
     const ext = Path.extname(file.hapi.filename);
@@ -33,7 +36,7 @@ function saveFile(file) {
       const path = `${__dirname}/../../uploads/${dirName}/${filename}${ext}`;
       fs.writeFile(path, Buffer.concat(fileBuffer), (error) => {
         if (error) reject(error);
-        resolve({ url: `/api/v1/imgs/${dirName}/${filename}${ext}` });
+        resolve({ url: `/v1/imgs/${dirName}/${filename}${ext}` });
       });
     });
   });
@@ -52,7 +55,9 @@ export default {
     const { date, name } = request.params;
     const path = `${__dirname}/../../uploads/${date}/${name}`;
     if (!fs.existsSync(path)) {
-      return h.response({ statusCode: 404, error: 'Not Found', message: statusCode.get('/404') }).code(404);
+      return h
+        .response({ statusCode: 404, error: 'Not Found', message: statusCode.get('/404') })
+        .code(404);
     }
     return h.file(path, { confine: false });
   },
@@ -60,8 +65,19 @@ export default {
     const data = request.payload;
     const saveList = [];
     Object.keys(data).forEach((item) => {
-      if (data[item].hapi.headers['content-type'] !== 'image/jpeg' || data[item].hapi.headers['content-type'] !== 'image/jpg' || data[item].hapi.headers['content-type'] !== 'image/png' || data[item].hapi.headers['content-type'] !== 'image/gif') {
-        return h.response({ statusCode: 400, error: 'Format Error 格式错误', message: statusCode.get('/400') }).code(400);
+      if (
+        data[item].hapi.headers['content-type'] !== 'image/jpeg' ||
+        data[item].hapi.headers['content-type'] !== 'image/jpg' ||
+        data[item].hapi.headers['content-type'] !== 'image/png' ||
+        data[item].hapi.headers['content-type'] !== 'image/gif'
+      ) {
+        return h
+          .response({
+            statusCode: 400,
+            error: 'Format Error 格式错误',
+            message: statusCode.get('/400'),
+          })
+          .code(400);
       }
       return undefined;
     });
@@ -76,6 +92,8 @@ export default {
       }
     });
     const response = await Promise.all(saveList);
-    return h.response({ statusCode: 201, data: response, message: statusCode.get('/201') }).code(201);
+    return h
+      .response({ statusCode: 201, data: response, message: statusCode.get('/201') })
+      .code(201);
   },
 };

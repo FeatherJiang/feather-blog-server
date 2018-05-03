@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-06 10:17:07
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-06 20:09:56
+ * @Last Modified time: 2018-05-03 20:42:13
  */
 
 import Joi from 'joi';
@@ -29,17 +29,19 @@ export default [
       auth: 'management',
       tags: ['api', 'management'],
       validate: {
-        headers: {
-          Authorization: Joi.string().required(),
-        },
+        // headers: {
+        //   Authorization: Joi.string().required(),
+        // },
         params: {
-          uid: Joi.number().integer().required(),
+          uid: Joi.number()
+            .integer()
+            .required(),
         },
         payload: {
           name: Joi.string().optional(),
           password: Joi.string().optional(),
           avatar: Joi.string().optional(),
-          mail: Joi.string().optional(),
+          email: Joi.string().optional(),
           url: Joi.string().optional(),
           introduce: Joi.string().optional(),
         },

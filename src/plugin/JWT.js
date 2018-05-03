@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-14 20:55:42
  * @Last Modified by: feather
- * @Last Modified time: 2018-02-15 13:11:07
+ * @Last Modified time: 2018-04-10 11:43:27
  */
 
 import jwt from 'jsonwebtoken';
@@ -17,11 +17,25 @@ function register(server) {
       const { req } = request.raw;
       const { authorization } = req.headers;
       if (!authorization) {
-        return h.response({ statusCode: 401, error: 'JsonWebTokenError', message: statusCode.get('/401') }).code(400).takeover();
+        return h
+          .response({
+            statusCode: 401,
+            error: 'JsonWebTokenError',
+            message: statusCode.get('/401'),
+          })
+          .code(401)
+          .takeover();
       }
       const index = authorization.indexOf('Bearer ');
       if (index === -1) {
-        return h.response({ statusCode: 401, error: 'JsonWebTokenError', message: statusCode.get('/401') }).code(400).takeover();
+        return h
+          .response({
+            statusCode: 401,
+            error: 'JsonWebTokenError',
+            message: statusCode.get('/401'),
+          })
+          .code(401)
+          .takeover();
       }
       const token = authorization.split(' ')[1];
       try {
@@ -34,7 +48,10 @@ function register(server) {
         jwt.verify(token, config.defaultGet('/secret'));
         return h.continue;
       } catch (error) {
-        return h.response({ statusCode: 401, error: error.name, message: statusCode.get('/401') }).code(400).takeover();
+        return h
+          .response({ statusCode: 401, error: error.name, message: statusCode.get('/401') })
+          .code(401)
+          .takeover();
       }
     },
   }));

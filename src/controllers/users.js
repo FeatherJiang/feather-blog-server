@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:24:31
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-13 22:19:58
+ * @Last Modified time: 2018-03-30 19:21:37
  */
 
 import crypto from 'crypto';
@@ -39,8 +39,8 @@ export default {
           },
         );
         res = {
-          statusCode: 200,
-          message: statusCode.get('/200'),
+          statusCode: 201,
+          message: statusCode.get('/201'),
           data: token,
         };
       } else {
@@ -49,9 +49,11 @@ export default {
           message: statusCode.get('/401'),
         };
       }
-      return h.response(res);
+      return h.response(res).code(res.statusCode);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getUsers(request, h) {
@@ -64,7 +66,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getUser(request, h) {
@@ -83,7 +87,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async putUser(request, h) {
@@ -108,7 +114,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
 };

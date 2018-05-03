@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 13:12:40
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-06 20:08:52
+ * @Last Modified time: 2018-05-03 19:35:05
  */
 
 import Joi from 'joi';
@@ -52,7 +52,10 @@ export default [
       },
       validate: {
         payload: {
-          file: Joi.any().meta({ swaggerType: 'file' }).required().description('Image File'),
+          file: Joi.any()
+            .meta({ swaggerType: 'file' })
+            .required()
+            .description('Image File'),
         },
       },
     },

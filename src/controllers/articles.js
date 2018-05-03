@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-23 11:46:09
+ * @Last Modified time: 2018-05-03 22:38:59
  */
 
 import statusCode from '../config/statusCode';
@@ -17,6 +17,9 @@ function parseComments(comments, pid) {
     if (comments.rows[i].pid === pid) {
       const temp = comments.rows[i];
       temp.children = parseComments(comments, comments.rows[i].cid);
+      if (temp.children.length === 0) {
+        delete temp.children;
+      }
       list.push(temp);
     }
   }
@@ -31,15 +34,11 @@ export default {
     if (!key) {
       try {
         const articles = await models.articles.findAndCountAll({
+          distinct: true,
           offset,
           limit,
-          order: [
-            ['createdAt', order],
-          ],
-          include: [
-            { model: models.types },
-            { model: models.tags },
-          ],
+          order: [['createdAt', order]],
+          include: [{ model: models.types }, { model: models.tags }],
         });
         const res = {
           statusCode: 200,
@@ -48,7 +47,9 @@ export default {
         };
         return h.response(res);
       } catch (error) {
-        return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+        return h
+          .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+          .code(400);
       }
     } else {
       key = `%${key}%`;
@@ -76,9 +77,7 @@ export default {
             },
           ],
         },
-        order: [
-          ['createdAt', order],
-        ],
+        order: [['createdAt', order]],
         include: [
           {
             model: models.types,
@@ -95,7 +94,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async postArticles(request, h) {
@@ -123,13 +124,16 @@ export default {
             throw new Error();
           }
         });
-        const article = await models.articles.create({
-          uid: 1,
-          title,
-          overview,
-          content,
-          banner,
-        }, { transaction: t });
+        const article = await models.articles.create(
+          {
+            uid: 1,
+            title,
+            overview,
+            content,
+            banner,
+          },
+          { transaction: t },
+        );
         const createAsyncList = [];
         const createTypesList = [];
         const createTagsList = [];
@@ -162,7 +166,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getArticlesByType(request, h) {
@@ -174,9 +180,7 @@ export default {
         subQuery: false,
         offset,
         limit,
-        order: [
-          ['createdAt', order],
-        ],
+        order: [['createdAt', order]],
         include: [
           {
             model: models.types,
@@ -194,7 +198,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getArticlesByTag(request, h) {
@@ -206,9 +212,7 @@ export default {
         subQuery: false,
         offset,
         limit,
-        order: [
-          ['createdAt', order],
-        ],
+        order: [['createdAt', order]],
         include: [
           { model: models.types },
           {
@@ -226,7 +230,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getArticle(request, h) {
@@ -236,10 +242,7 @@ export default {
         where: {
           aid,
         },
-        include: [
-          { model: models.types },
-          { model: models.tags },
-        ],
+        include: [{ model: models.types }, { model: models.tags }],
       });
       if (article) {
         await models.articles.update(
@@ -260,7 +263,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async putArticle(request, h) {
@@ -289,16 +294,13 @@ export default {
             throw new Error();
           }
         });
-        const article = await models.articles.update(
-          updateData,
-          {
-            where: {
-              aid,
-            },
-            returning: true,
-            transaction: t,
+        const article = await models.articles.update(updateData, {
+          where: {
+            aid,
           },
-        );
+          returning: true,
+          transaction: t,
+        });
         const AsyncList = [];
         const createTypesList = [];
         const createTagsList = [];
@@ -333,7 +335,28 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
+    }
+  },
+  async delArticle(request, h) {
+    const { aid } = request.params;
+    try {
+      await models.articles.destroy({
+        where: {
+          aid,
+        },
+      });
+      const res = {
+        statusCode: 204,
+        message: statusCode.get('/204'),
+      };
+      return h.response(res);
+    } catch (error) {
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async putArticleStar(request, h) {
@@ -347,15 +370,18 @@ export default {
           },
           transaction: t,
         });
-        const article = await models.articles.update({
-          starNum: oldArticle.starNum + 1,
-        }, {
-          where: {
-            aid,
+        const article = await models.articles.update(
+          {
+            starNum: oldArticle.starNum + 1,
           },
-          returning: true,
-          transaction: t,
-        });
+          {
+            where: {
+              aid,
+            },
+            returning: true,
+            transaction: t,
+          },
+        );
         return article[1];
       });
       const res = {
@@ -365,7 +391,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async delArticleStar(request, h) {
@@ -381,7 +409,7 @@ export default {
         });
         await models.articles.update(
           {
-            starNum: (oldArticle.starNum - 1) >= 1 ? oldArticle.starNum - 1 : 0,
+            starNum: oldArticle.starNum - 1 >= 1 ? oldArticle.starNum - 1 : 0,
           },
           {
             where: {
@@ -398,7 +426,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getArticleComments(request, h) {
@@ -409,9 +439,7 @@ export default {
       const result = await models.comments.findAndCountAll({
         limit,
         offset,
-        order: [
-          ['createdAt', order],
-        ],
+        order: [['createdAt', order]],
         where: {
           aid,
         },
@@ -421,9 +449,6 @@ export default {
         count: comments.count,
         rows: [],
       };
-      for (let i = 0; i < comments.rows.length; i += 1) {
-        comments.rows[i].children = [];
-      }
 
       commentList.rows = parseComments(comments, 0);
 
@@ -434,13 +459,19 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async postArticleComments(request, h) {
     const { aid } = request.params;
     const {
-      pid, avatar = '/api/v1/imgs/default/anonymous-avatar.png', name = 'anonymous', email = '', content,
+      pid,
+      avatar = '/api/v1/imgs/default/anonymous-avatar.png',
+      name = 'anonymous',
+      email = '',
+      content,
     } = request.payload;
     try {
       const result = await models.sequelize.transaction(async (t) => {
@@ -482,7 +513,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async delArticleComment(request, h) {
@@ -522,7 +555,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getArchive(request, h) {
@@ -554,7 +589,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async getArchiveArticles(request, h) {
@@ -567,21 +604,13 @@ export default {
       const articles = await models.articles.findAndCountAll({
         limit,
         offset,
-        order: [
-          ['createdAt', order],
-        ],
+        order: [['createdAt', order]],
         where: {
           createdAt: {
-            [Op.between]: [
-              startTime,
-              endTime,
-            ],
+            [Op.between]: [startTime, endTime],
           },
         },
-        include: [
-          { model: models.types },
-          { model: models.tags },
-        ],
+        include: [{ model: models.types }, { model: models.tags }],
       });
       const res = {
         statusCode: 200,
@@ -590,7 +619,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
 };
