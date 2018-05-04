@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:14:24
  * @Last Modified by: feather
- * @Last Modified time: 2018-04-10 14:11:54
+ * @Last Modified time: 2018-05-04 19:57:45
  */
 
 import Confidence from 'confidence';
@@ -42,10 +42,9 @@ const config = {
       },
     },
     production: {
-      database: 'postgres',
+      database: 'feather',
       username: 'postgres',
-      password: null,
-      host: '127.0.0.1',
+      password: 'postgres',
       dialect: 'postgres',
       pool: {
         max: 5,

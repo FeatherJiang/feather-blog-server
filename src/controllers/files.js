@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 20:52:09
  * @Last Modified by: feather
- * @Last Modified time: 2018-05-03 19:26:19
+ * @Last Modified time: 2018-05-04 20:35:40
  */
 
 import crypto from 'crypto';
@@ -48,6 +48,14 @@ export default {
     const path = `${__dirname}/../../public${pathname}`;
     if (!fs.existsSync(path) || pathname === '/') {
       return h.file(`${__dirname}/../../public/index.html`);
+    }
+    return h.file(path);
+  },
+  async getAdminFile(request, h) {
+    const pathname = request.path.replace('home/', '');
+    const path = `${__dirname}/../../public${pathname}`;
+    if (!fs.existsSync(path) || pathname === '/admin') {
+      return h.file(`${__dirname}/../../public/admin/index.html`);
     }
     return h.file(path);
   },

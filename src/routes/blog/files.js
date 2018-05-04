@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 13:12:40
  * @Last Modified by: feather
- * @Last Modified time: 2018-05-03 19:35:05
+ * @Last Modified time: 2018-05-04 16:01:16
  */
 
 import Joi from 'joi';
@@ -20,6 +20,17 @@ export default [
     method: 'GET',
     path: '/{param*}',
     handler: Controllers.files.getFile,
+  },
+  {
+    config: {
+      state: {
+        failAction: 'ignore',
+        parse: false,
+      },
+    },
+    method: 'GET',
+    path: '/admin/{param*}',
+    handler: Controllers.files.getAdminFile,
   },
   {
     config: {

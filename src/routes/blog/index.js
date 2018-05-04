@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:31:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-14 11:25:11
+ * @Last Modified time: 2018-05-04 14:55:16
  */
 
 import users from './users';
@@ -14,7 +14,9 @@ import files from './files';
 import statusCode from '../../config/statusCode';
 
 function failAction(request, h, error) {
-  const response = h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+  const response = h
+    .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+    .code(400);
   return response.takeover();
 }
 
