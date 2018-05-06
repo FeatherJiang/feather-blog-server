@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:24:08
  * @Last Modified by: feather
- * @Last Modified time: 2018-03-07 21:33:28
+ * @Last Modified time: 2018-05-06 17:35:40
  */
 
 import statusCode from '../config/statusCode';
@@ -13,9 +13,8 @@ export default {
   async getTypes(request, h) {
     try {
       const types = await models.types.findAll({
-        include: [
-          { model: models.articles },
-        ],
+        order: [['tid', 'ASC']],
+        include: [{ model: models.articles }],
       });
       for (let i = 0; i < types.length; i += 1) {
         types[i].dataValues.articleCount = types[i].articles.length;
@@ -28,7 +27,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async postTypes(request, h) {
@@ -44,7 +45,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async putType(request, h) {
@@ -69,7 +72,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
   async delType(request, h) {
@@ -86,7 +91,9 @@ export default {
       };
       return h.response(res);
     } catch (error) {
-      return h.response({ statusCode: 400, error: error.name, message: statusCode.get('/400') }).code(400);
+      return h
+        .response({ statusCode: 400, error: error.name, message: statusCode.get('/400') })
+        .code(400);
     }
   },
 };
