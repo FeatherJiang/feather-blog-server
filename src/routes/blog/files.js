@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-15 13:12:40
  * @Last Modified by: feather
- * @Last Modified time: 2018-05-04 16:01:16
+ * @Last Modified time: 2018-05-06 22:11:20
  */
 
 import Joi from 'joi';
@@ -57,7 +57,7 @@ export default [
       payload: {
         parse: true,
         output: 'stream',
-        maxBytes: 3000000,
+        maxBytes: 20000000,
         allow: 'multipart/form-data',
         timeout: false,
       },
