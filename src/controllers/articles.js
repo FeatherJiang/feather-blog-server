@@ -3,7 +3,7 @@
  * @Author: feather
  * @Date: 2018-02-05 17:23:29
  * @Last Modified by: feather
- * @Last Modified time: 2018-05-03 22:38:59
+ * @Last Modified time: 2018-05-09 16:39:36
  */
 
 import statusCode from '../config/statusCode';
@@ -56,6 +56,7 @@ export default {
     }
     try {
       const articles = await models.articles.findAndCountAll({
+        distinct: true,
         offset,
         limit,
         where: {
@@ -177,7 +178,7 @@ export default {
     const offset = (page - 1) * limit;
     try {
       const article = await models.articles.findAndCountAll({
-        subQuery: false,
+        distinct: true,
         offset,
         limit,
         order: [['createdAt', order]],
@@ -209,7 +210,7 @@ export default {
     const offset = (page - 1) * limit;
     try {
       const article = await models.articles.findAndCountAll({
-        subQuery: false,
+        distinct: true,
         offset,
         limit,
         order: [['createdAt', order]],
@@ -602,6 +603,7 @@ export default {
       const startTime = new Date(year, month - 1, 1);
       const endTime = new Date(year, month, 0);
       const articles = await models.articles.findAndCountAll({
+        distinct: true,
         limit,
         offset,
         order: [['createdAt', order]],
